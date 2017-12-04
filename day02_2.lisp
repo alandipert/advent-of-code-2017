@@ -1,23 +1,16 @@
 #!/usr/bin/sbcl script
-
-(defun split-string (str delim-char)
-  (loop for pos0 = -1 then pos1
-        for pos1 = (position delim-char str :start (1+ pos0))
-        collect (subseq str (1+ pos0) (or pos1 (length str)))
-        while pos1))
-
-(defun pairs (list)
-  (mapcan (lambda (pair)
-			(list pair (reverse pair)))
-		  (mapcon (lambda (tail)
-					(mapcar (lambda (x)
-							  (list (car tail) x))
-							(cdr tail)))
-				  list)))
+;; sbcl --script day02_2.lisp < ~/Desktop/input
 
 (defun parse (line)
-  (mapcar #'read-from-string
-		  (split-string line #\tab)))
+  (let* ((nums (coerce (read-from-string (concatenate 'string "(" line ")")) 'vector))
+         (len (1- (length nums))))
+    (loop named outer
+          for i from 0 to len
+          do (loop for j from 0 to len
+                   do (when (not (eq i j))
+                        (let ((pair (sort (mapcar (lambda (n) (aref nums n)) (list i j)) #'>)))
+                          (when (zerop (apply #'mod pair))
+                            (return-from outer (apply #'/ pair)))))))))
 
 (princ
  (loop
