@@ -1,23 +1,19 @@
+;; Incorporates some ideas from https://gist.github.com/death/02e716211827683c48a9c580348fd5a5
+
 (defun biggest (banks)
-  (loop with biggest = (elt banks 0)
-        with biggest-idx = 0
-        for idx from 1 to (1- (length banks))
-        when (> (elt banks idx) biggest)
-          do (setq biggest (elt banks idx)
-                   biggest-idx idx)
-        finally (return biggest-idx)))
+  (position (reduce #'max banks) banks))
 
 (defun next-idx (banks idx)
   (mod (1+ idx) (length banks)))
 
 (defun redistribute1 (banks)
   (loop with biggest-idx = (biggest banks)
-        with amount = (elt banks biggest-idx)
+        with amount = (aref banks biggest-idx)
         with new-banks = (copy-seq banks)
-          initially (setf (elt new-banks biggest-idx) 0)
+          initially (setf (aref new-banks biggest-idx) 0)
         with idx = (next-idx new-banks biggest-idx)
-        while (not (zerop amount))
-        do (progn (incf (elt new-banks idx))
+        until (zerop amount)
+        do (progn (incf (aref new-banks idx))
                   (decf amount)
                   (setf idx (next-idx new-banks idx)))
         finally (return new-banks)))
@@ -26,7 +22,7 @@
   (loop with seen = (make-hash-table :test #'equalp)
         with i = 0
         for b = banks then (redistribute1 b)
-        while (not (gethash b seen))
+        until (gethash b seen)
         do (progn (incf i)
                   (setf (gethash b seen) t))
         finally (return (values i b))))
