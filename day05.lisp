@@ -14,9 +14,9 @@
 
 ;;;; part 1
 
-(defun ev1! (code ptr &key (jmp-fun #'1+))
+(defun ev1! (code ptr)
   (let ((jmp (aref code ptr)))
-    (setf (aref code ptr) (funcall jmp-fun jmp))
+    (incf (aref code ptr))
     (+ ptr jmp)))
 
 (defun exited? (code-length ptr)
