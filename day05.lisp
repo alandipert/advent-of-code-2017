@@ -1,53 +1,37 @@
-;;;; http://adventofcode.com/2017/day/5
-
-;;;; util funs
-
 (defun read-input (f)
   (with-open-file (stream f)
-    (coerce
-     (loop for line = (read stream nil nil)
-           while line
-           collect line)
-     'simple-vector)))
+    (let ((nums (loop for line = (read stream nil nil)
+                      while line
+                      collect line)))
+      (coerce nums '(simple-array fixnum (*))))))
 
-(defparameter input (read-input "/Users/alandipert/Desktop/input"))
+(defparameter *input* (read-input "/Users/alandipert/Desktop/input"))
 
-;;;; part 1
+;; Adapted from http://lpaste.net/360573 by jdz on in #lisp on freenode
 
-(defun ev1! (code ptr)
-  (let ((jmp (aref code ptr)))
-    (incf (aref code ptr))
-    (+ ptr jmp)))
+(defmacro make-runner (jmp-expr)
+  `(lambda (array)
+    (declare (type (simple-array fixnum (*)) array)
+             (optimize (speed 3) (safety 0)))
+    (flet ((jmp-fun (%) ,jmp-expr))
+      (let* ((i 0)
+             (j 0)
+             (array (copy-seq array))
+             (length (length array))
+             (steps 0))
+        (declare (type fixnum i j steps))
+        (loop
+          (incf steps)
+          (setf j (aref array i))
+          (incf (aref array i) (jmp-fun j))
+          (incf i j)
+          (when (<= length i)
+            (return steps)))))))
 
-(defun exited? (code-length ptr)
-  (declare (optimize (speed 3))
-           (type fixnum code-length ptr))
-  (or (>= ptr code-length) (< ptr 0)))
+;; part 1
 
-(defun run (code evfun)
-  (declare (optimize (speed 3))
-           (type simple-vector code)
-           (type function evfun))
-  (loop with steps = 0
-        with ptr = 0
-        with code = (copy-seq code)
-        with code-length = (length code)
-        until (exited? code-length ptr)
-        do (progn (setf ptr (funcall evfun code ptr))
-                  (incf (the fixnum steps)))
-        finally (return steps)))
+(time (funcall (make-runner (progn % 1)) *input*))
 
-(time (run input #'ev1!))
+;; part 2
 
-;;;; part 2
-
-(defun ev2! (code ptr)
-  (declare (optimize (speed 3))
-           (type simple-vector code))
-  (let* ((jmp (aref code ptr))
-         (new-jmp (+ jmp (if (>= jmp 3) -1 1))))
-    (declare (type fixnum jmp new-jmp))
-    (setf (aref code ptr) new-jmp)
-    (the fixnum (+ ptr jmp))))
-
-(time (run input #'ev2!))
+(time (funcall (make-runner (if (<= 3 %) -1 1)) *input*))
