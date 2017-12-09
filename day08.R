@@ -23,6 +23,5 @@ run <- function(inputFile) {
   runEnv <- env(REG = new_environment(), MAX = 0)
   exprs <- lapply(readLines(inputFile), compile)
   for (e in exprs) eval(e, envir = runEnv)
-  list(maxEnd = max(unlist(as.list(runEnv$REG))),
-       maxAllTime = runEnv$MAX)
+  list(maxEnd = max(unlist(as.list(runEnv$REG))), maxAllTime = runEnv$MAX)
 }
