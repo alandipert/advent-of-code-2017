@@ -6,16 +6,16 @@ get <- function(env, reg) {
 
 compile <- function(line) {
   toks <- strsplit(line, " ")[[1]]
-  op_reg <- toks[[1]]
+  opReg <- toks[[1]]
   op <- list("inc" = "+", "dec" = "-")[[toks[[2]]]]
-  op_arg <- as.numeric(toks[[3]])
-  cmp_reg <- toks[[5]]
+  opArg <- as.numeric(toks[[3]])
+  cmpReg <- toks[[5]]
   cmp <- toks[[6]]
-  cmp_arg <- as.numeric(toks[[7]])
-  expr(if (.Primitive(!!cmp)(get(REG, !!cmp_reg), !!cmp_arg)) {
-    newVal <- .Primitive(!!op)(get(REG, !!op_reg), !!op_arg)
+  cmpArg <- as.numeric(toks[[7]])
+  expr(if (.Primitive(!!cmp)(get(REG, !!cmpReg), !!cmpArg)) {
+    newVal <- .Primitive(!!op)(get(REG, !!opReg), !!opArg)
     if (newVal > MAX) MAX <- newVal
-    REG[[!!op_reg]] <- newVal
+    REG[[!!opReg]] <- newVal
   })
 }
 
