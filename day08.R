@@ -9,11 +9,8 @@ compile <- function(line) {
     if (.Primitive(!!tokens[[6]])(testVal, !!tokens[[7]])) {
       reg <- !!tokens[[1]]
       prev <- if (is.null(registers[[reg]])) 0 else registers[[reg]]
-      !!if (tokens[[2]] == "inc") {
-        quo(registers[[reg]] <- prev + !!tokens[[3]])
-      } else {
-        quo(registers[[reg]] <- prev - !!tokens[[3]])
-      }
+      op <- !!if (tokens[[2]] == "inc") "+" else "-"
+      registers[[reg]] <- .Primitive(op)(prev, !!tokens[[3]])
     }
   })
 }
