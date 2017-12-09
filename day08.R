@@ -10,10 +10,7 @@ compile <- function(line) {
       reg <- !!tokens[[1]]
       prev <- if (is.null(registers[[reg]])) 0 else registers[[reg]]
       !!if (tokens[[2]] == "inc") {
-        quo({
-          sum <- prev + !!tokens[[3]]
-          registers[[reg]] <- sum
-        })
+        quo(registers[[reg]] <- prev + !!tokens[[3]])
       } else {
         quo(registers[[reg]] <- prev - !!tokens[[3]])
       }
