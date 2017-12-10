@@ -19,9 +19,9 @@ compile1 <- function(line) {
   })
 }
 
-run <- function(inputFile) {
+run <- function(input_file) {
   run_env <- env(REG = new_environment(), MAX = 0)
-  for (line in readLines(inputFile))
+  for (line in readLines(input_file))
     eval(compile1(line), envir = run_env)
   list(maxEnd = max(unlist(as.list(run_env$REG))),
        maxAllTime = run_env$MAX)
