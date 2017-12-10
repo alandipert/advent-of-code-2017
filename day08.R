@@ -4,23 +4,25 @@ get <- function(env, reg) {
   if (is.null(env[[reg]])) 0 else env[[reg]]
 }
 
-compile <- function(line) {
+compile1 <- function(line) {
   toks <- strsplit(line, " ")[[1]]
-  opReg <- toks[[1]]
+  op_reg <- toks[[1]]
   op <- list("inc" = "+", "dec" = "-")[[toks[[2]]]]
-  opArg <- as.numeric(toks[[3]])
-  cmpReg <- toks[[5]]
+  op_arg <- as.numeric(toks[[3]])
+  cmp_reg <- toks[[5]]
   cmp <- toks[[6]]
-  cmpArg <- as.numeric(toks[[7]])
-  expr(if (.Primitive(!!cmp)(get(REG, !!cmpReg), !!cmpArg)) {
-    newVal <- .Primitive(!!op)(get(REG, !!opReg), !!opArg)
-    if (newVal > MAX) MAX <- newVal
-    REG[[!!opReg]] <- newVal
+  cmp_arg <- as.numeric(toks[[7]])
+  expr(if (.Primitive(!!cmp)(get(REG, !!cmp_reg), !!cmp_arg)) {
+    new_val <- .Primitive(!!op)(get(REG, !!op_reg), !!op_arg)
+    if (new_val > MAX) MAX <- new_val
+    REG[[!!op_reg]] <- new_val
   })
 }
 
 run <- function(inputFile) {
-  runEnv <- env(REG = new_environment(), MAX = 0)
-  for (line in readLines(inputFile)) eval(compile(line), envir = runEnv)
-  list(maxEnd = max(unlist(as.list(runEnv$REG))), maxAllTime = runEnv$MAX)
+  run_env <- env(REG = new_environment(), MAX = 0)
+  for (line in readLines(inputFile))
+    eval(compile1(line), envir = run_env)
+  list(maxEnd = max(unlist(as.list(run_env$REG))),
+       maxAllTime = run_env$MAX)
 }
