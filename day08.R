@@ -14,7 +14,8 @@ compile1 <- function(line) {
   cmp_arg <- as.numeric(toks[[7]])
   expr(if (.Primitive(!!cmp)(get(REG, !!cmp_reg), !!cmp_arg)) {
     new_val <- .Primitive(!!op)(get(REG, !!op_reg), !!op_arg)
-    if (new_val > MAX) MAX <- new_val
+    !!!(if (op == "+" && op_arg > 0)
+      list(expr(if (new_val > MAX) MAX <- new_val)))
     REG[[!!op_reg]] <- new_val
   })
 }
