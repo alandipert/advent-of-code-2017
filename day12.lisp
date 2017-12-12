@@ -28,4 +28,4 @@
                  (when (not (gethash group groups))
                    (setf (gethash group groups) t))))
              *input*)
-    groups))
+    (hash-table-count groups)))
