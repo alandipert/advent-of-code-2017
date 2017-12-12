@@ -1,0 +1,31 @@
+(defun read-input (f)
+  (with-open-file (stream f)
+    (loop with edges = (make-hash-table)
+          for line = (substitute #\space #\, (read-line stream nil nil))
+          while line
+          for row = (read-from-string (concatenate 'string "(" line ")"))
+          do (dolist (n (nthcdr 2 row))
+               (pushnew n (gethash (car row) edges)))
+          finally (return edges))))
+
+(defparameter *input* (read-input "/Users/alandipert/Desktop/input"))
+
+(defun group (edges root &optional (seen (make-hash-table)))
+  (setf (gethash root seen) t)
+  (dolist (kid (gethash root edges))
+    (when (not (gethash kid seen))
+      (children edges kid seen)))
+  seen)
+
+(defun part-1 ()
+  (hash-table-count (group *input* 0)))
+
+(defun part-2 ()
+  (let ((groups (make-hash-table :test #'equalp)))
+    (maphash (lambda (k v)
+               (declare (ignore v))
+               (let ((group (group *input* k)))
+                 (when (not (gethash group groups))
+                   (setf (gethash group groups) t))))
+             *input*)
+    groups))
