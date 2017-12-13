@@ -1,4 +1,5 @@
-;; CL port of Mike Fikes's awesome solution at https://github.com/mfikes/advent-of-code/blob/master/src/advent_2017/day_13.cljc
+;; CL port of Mike Fikes's awesome solution at
+;; https://github.com/mfikes/advent-of-code/blob/master/src/advent_2017/day_13.cljc
 
 (defun read-input (f)
   (with-open-file (stream f)
