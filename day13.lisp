@@ -5,7 +5,7 @@
   (with-open-file (stream f)
     (loop for line = (remove #\: (read-line stream nil nil))
           while line
-          collect (read-from-string (concatenate 'string "(" line ")")))))
+          collect (read-from-string (format nil "(~A)" line)))))
 
 (defparameter *input* (read-input "/Users/alandipert/Desktop/input"))
 
